@@ -1,36 +1,50 @@
-import {API} from "../../assets/api/api";
-import {CharacterType, LocationType, ResponseType} from "../../assets/api/rick-and-morty-api";
-import {Header} from "../../components/Header/Header";
-import Image from "next/image";
+import {LocationType, ResponseType} from "../../assets/api/rick-and-morty-api";
 import {PageWrapper} from "../../components/PageWrapper/PageWrapper";
 import {Card} from "../../components/Card/Card";
-import {useQuery} from "@tanstack/react-query";
-import {log} from "node:util";
+import {dehydrate, useQuery} from "@tanstack/react-query";
+import {QueryClient} from "@tanstack/query-core";
+import {BaseLayout, getLayout} from "../../components/Layout/BaseLayout/BaseLayout";
+import Characters from "../characters";
+import {Header} from "../../components/Header/Header";
 
-export const getLocations = () => {
-    return fetch('https://rickandmortyapi.com/api/location', {
+export const getLocations = async () => {
+    const res = await fetch('https://rickandmortyapi.com/api/location', {
         method: "GET",
-    }).then(res => res.json());
+    });
+    return await res.json();
+}
+
+export const getStaticProps = async () => {
+    const queryClient = new QueryClient();
+
+    await queryClient.fetchQuery(['locations'], getLocations)
+
+    return {
+        props: {
+            dehydrateState: dehydrate(queryClient)
+        }
+    }
 }
 
 const Location = () => {
     const {data: locations} = useQuery<ResponseType<LocationType>>(['locations'], getLocations)
     if (!locations) return null
 
-    console.log(locations)
-    const locationList = locations.results.map(loc => <Card key={loc.id} {...loc} >
-        <h4>{`Type: ${loc.type}`}</h4>
-        <h4>{`Dimension: ${loc.dimension}`}</h4>
-    </Card>)
+    const locationList = locations.results.map(loc => (
+        <Card key={loc.id} {...loc} >
+            <h4>{`Type: ${loc.type}`}</h4>
+            <h4>{`Dimension: ${loc.dimension}`}</h4>
+        </Card>
+    ))
 
     return (
         <PageWrapper>
-            <Header/>
             {locationList}
         </PageWrapper>
     );
 };
 
+Location.getLayout = getLayout;
 export default Location;
 
 type LocationProps = {

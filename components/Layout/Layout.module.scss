@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.main {
+  //display: grid;
+  //grid-template-columns: repeat(3, minmax(200px, 1fr));
+  //grid-template-rows: auto;
+  //gap: 1.5rem;
+}

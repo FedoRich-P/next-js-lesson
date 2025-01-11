@@ -34,7 +34,4 @@ const Name = styled.h2`
   border-bottom: 2px solid #831a65;
   text-align: center;
   text-transform: uppercase;
-  //margin-bottom: 5px;
-  //font-weight: 600;
-  //font-size: 24px;
 `;

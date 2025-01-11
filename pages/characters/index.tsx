@@ -1,9 +1,10 @@
 import {API} from "../../assets/api/api";
 import {CharacterType, ResponseType} from "../../assets/api/rick-and-morty-api";
 import {Header} from "../../components/Header/Header";
-import Image from "next/image";
 import {PageWrapper} from "../../components/PageWrapper/PageWrapper";
-import {Card} from "../../components/Card/Card";
+import {CharacterCard} from "../../components/Card/CharacterCard/CharacterCard";
+import {BaseLayout, getLayout} from "../../components/Layout/BaseLayout/BaseLayout";
+import Home from "../index";
 
 export const getStaticProps = async () => {
     const characters = await API.rickAndMorty.getCharacters();
@@ -17,20 +18,18 @@ export const getStaticProps = async () => {
 
 const Characters = ({characters}: CharactersProps) => {
 
-    const characterList = characters.results.map(character => <Card key={character.id} {...character} >
-        <Image src={character.image} alt={character.name} width={300} height={300} priority />
-        <h4>{`Status: ${character.status}`}</h4>
-        <h4>{`Species: ${character.species}`}</h4>
-    </Card>)
+    const characterList = characters.results.map(character => (
+        <CharacterCard key={character.id} character={character}/>
+    ))
 
     return (
         <PageWrapper>
-            <Header/>
             {characterList}
         </PageWrapper>
     );
 };
 
+Characters.getLayout = getLayout;
 export default Characters;
 
 type CharactersProps = {
